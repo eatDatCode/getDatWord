@@ -12,5 +12,5 @@ Change the permission to executable
 $ chmod a+x getDatCode.py
 
 # How to Run:
-$./getDatCode word
+$./getDatCode word(the word you are looking for)
 
