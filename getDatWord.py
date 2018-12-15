@@ -71,7 +71,7 @@ if __name__=='__main__':
     # If user don't give commnad line argument then print error!
     if(len(sys.argv) == 1):
         print("Error! Type a word after the script.")
-        print("e.g: word hello")
+        print("e.g: ./getDatWord.py hello")
         exit()
 
     # Assigns the argument to word variable
