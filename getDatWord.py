@@ -27,6 +27,11 @@ def getDatWord(word):
     # Find all the tags where the definition is in dictionary.com
     wordLine = bs.findAll('li',{'value':'1'})
 
+    # Checks If word not found in the dictionary.com
+    if( len(wordLine) == 0):
+        print("Word %s not found!\t Make sure you spelled it right." % word)
+        exit()
+
     # Seperate the definition and example
     defRegx = re.compile(r'.+:')
     exampleRegx = re.compile(r':.+')
@@ -57,6 +62,13 @@ def printWord(defn,exmpl):
 if __name__=='__main__':
     """ This method initiates the program , taking input from command line\
             then calling the getDatWord() method to give output"""
+    # If user don't give commnad line argument then print error!
+    if(len(sys.argv) == 1):
+        print("Error! Type a word after the script.")
+        print("e.g: ./getDatWord hello")
+        exit()
+
+    # Assigns the argument to word variable
     word = sys.argv[1]
 
     # Calls the method to find the word definition
