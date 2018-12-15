@@ -9,6 +9,7 @@ Definition with example
 import re
 import sys
 from urllib.request import urlopen
+from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 
 
@@ -19,7 +20,12 @@ def getDatWord(word):
     url = 'https://www.dictionary.com/browse/'+word+'?s/t'
 
     # Uses the library urllib and scraps the source code of the url
-    html = urlopen(url)
+    try:
+        html = urlopen(url)  
+    except HTTPError as e:
+        print(e)    # The webstie redirects to antoher page if the desired word is not found
+        print("Make Sure the word is spelled right!")
+        exit()
 
     # Beautifies the html source code using BeautifulSoup library
     bs = BeautifulSoup(html.read(),'html.parser')
@@ -43,7 +49,7 @@ def getDatWord(word):
     # Check whether there is an example or not
     if(len(example) == 0):
         definition = definitionData[:-1]
-        example = "---"
+        example = "-------"
     else:
         definition = definition[0][:-1]
         example = example[0][2:]
@@ -65,7 +71,7 @@ if __name__=='__main__':
     # If user don't give commnad line argument then print error!
     if(len(sys.argv) == 1):
         print("Error! Type a word after the script.")
-        print("e.g: ./getDatWord hello")
+        print("e.g: word hello")
         exit()
 
     # Assigns the argument to word variable
