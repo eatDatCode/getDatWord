@@ -1,6 +1,6 @@
 #!/usr/bin/python3.7
 """
-file: dict.py
+file: getDatWord.py
 author: @github.com/eatDatCode
 Takes a single word as command line argument and gives
 Definition with example
