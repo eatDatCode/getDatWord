@@ -14,3 +14,12 @@ $ chmod a+x getDatCode.py
 # How to Run:
 $./getDatCode word(the word you are looking for)
 
+# To access it from anywhere in the terminal:
+/*Go to the directory of the git repository */
+$ cd getDatWord/
+$ cp ./getDatWord.py word
+$ sudo mv word /usr/bin/
+/* Now the script is available in the terminal from anywhere*/
+$ word persuade
+Definition: To prevail on (a person) to do something, as by advising or urging.
+Example:  We could not persuade him to wait.
