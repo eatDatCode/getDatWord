@@ -1,81 +1,124 @@
 #!/usr/bin/python3.7
+
 """
-file: getDatWord.py
-author: @github.com/eatDatCode
-Takes a single word as command line argument and gives
-Definition with example
+file: grabDatWord.py
+Author: @github.com/eatDatCode
+The web dictionary used: https://en.oxforddictoionaries.com/
 """
 
-import re
 import sys
+import re
 from urllib.request import urlopen
 from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 
+def grabDatWord(word):
+    """This methods try to find the input word in the dictionaries definition section
+        and returns the needful else diverts to misspell-check method"""
+    # Forms a basic search url
+    baseUrl = 'https://en.oxforddictionaries.com/'
+    url = baseUrl + 'definition/'+ word
 
-def getDatWord(word):
-    """This method search for the word in dictionay.com and returns \
-            the definition with a suitable example"""
-    # This string forms the url from which the data will be scrapped
-    url = 'https://www.dictionary.com/browse/'+word+'?s/t'
+    # Scraps the source file for the word and beautifies it
+    html = urlopen(url)
+    bs = BeautifulSoup(html.read(),'html.parser')
+    defList = bs.findAll('span',{'class':'ind'})
 
-    # Uses the library urllib and scraps the source code of the url
-    try:
-        html = urlopen(url)  
-    except HTTPError as e:
-        print(e)    # The webstie redirects to antoher page if the desired word is not found
-        print("Make Sure the word is spelled right!")
-        exit()
+    # If the word requested by the user is not found
+    if(len(defList)==0):
+        # In case the word is slightly misspelled
+        print("Checking spelling...")
+        spellCheck(baseUrl,word)
 
-    # Beautifies the html source code using BeautifulSoup library
+    else:
+        # Definition/s,associated Part of Speech,Example, Origin, PhoneticSpell
+        definedList = bs.findAll('span',{'class':'ind'})
+        posList = bs.findAll('span',{'class':'pos'})
+        exList = bs.findAll('div',{'class':'ex'})
+        origin = bs.findAll('div',{'class':'senseInnerWrapper'})
+        phonetic = bs.findAll('span',{'class':'phoneticspelling'})
+
+
+        l = len(origin[0].get_text())
+
+        # prints the phonetic spelling
+        print("Phonetic Spelling:"+phonetic[0].get_text())
+
+        """Boy! sometimes the origin of a word can be a long story so I had to monitor
+        the string's length of the origin of a word"""
+        if l < 200:
+            # prints the origin of the word if it's samll story
+            print("Origin:"+origin[0].get_text())
+
+        print("-"*60)
+
+        # Prints definition according to Part Of Speech
+        for i in range(len(posList)):
+            print(word.capitalize()+"("+posList[i].get_text()+"):")
+            print("Definition:"+definedList[0].get_text())
+            print("Example:"+exList[i].get_text())
+            print("-"*60)
+
+
+
+def spellCheck(baseUrl,word):
+    """This method try to find the a near match of the misspelled word and gives a suggestion
+        or two maybe"""
+    # Forms a new url to check near match
+    url = baseUrl + 'search?filter=dictionary&query=' + word
+
+    html = urlopen(url)
+    # Beautifies the source code
     bs = BeautifulSoup(html.read(),'html.parser')
 
-    # Find all the tags where the definition is in dictionary.com
-    wordLine = bs.findAll('li',{'value':'1'})
-
-    # Checks If word not found in the dictionary.com
-    if( len(wordLine) == 0):
-        print("Word %s not found!\t Make sure you spelled it right." % word)
-        exit()
-
-    # Seperate the definition and example
-    defRegx = re.compile(r'.+:')
-    exampleRegx = re.compile(r':.+')
-    definitionData = wordLine[0].get_text()
-
-    definition = defRegx.findall(definitionData)
-    example = exampleRegx.findall(definitionData)
-
-    # Check whether there is an example or not
-    if(len(example) == 0):
-        definition = definitionData[:-1]
-        example = "-------"
+    # Checks If the word is from Mars <----You get the joke right :)
+    nearList = bs.findAll('ul',{'class','search-results'})
+    if(len(nearList)==0):
+        print("%s NOT FOUND!" % word)
     else:
-        definition = definition[0][:-1]
-        example = example[0][2:]
+        # Shows user the list of near matches
+        suggestions = bs.findAll('div',{'class':'heading'})
+        print("%s is not found,\nHere are some near matches:" % word)
 
-    # Sends the dat to printWord methods to be printed
-    printWord(definition,example)
+        # Makes a string out of the suggestions
+        suggest_string = str(suggestions[0])
+
+        # Forms a regular expression to scraps the suggestions
+        regx = re.compile(r'>\w+<')
+        suggest_words = regx.findall(suggest_string)
+
+        words = []
+
+        # prints all the suggestions
+        l = len(suggest_words) - 2
+        for i in range(l):
+            print("[%2d] %s" % (i+1,(suggest_words[i][1:-1])))
+            words.append(suggest_words[i][1:-1])
 
 
-def printWord(defn,exmpl):
-    """This method simply prints the word definition and example \
-            by formatting the strings"""
-    print("Definition: %s." % defn.capitalize())
-    print("Example: %s " % exmpl.capitalize())
+        # Prompts user to choose from the list a number
+        try:
+            choice = int(input('Which one to look for? : '))
+        except ValueError:
+            print("Enter a number, Not string!")
+
+        if(choice>(l+1)):
+            print("Enter a choice lower than the total suggestions Idiot!")
+
+        # Makes another query and redirects to grabDatWord() method
+        newWord = words[choice-1]
+        print('Looking for %s...' % newWord)
+        grabDatWord(newWord)
 
 
 if __name__=='__main__':
-    """ This method initiates the program , taking input from command line\
-            then calling the getDatWord() method to give output"""
-    # If user don't give commnad line argument then print error!
-    if(len(sys.argv) == 1):
-        print("Error! Type a word after the script.")
-        print("e.g: ./getDatWord.py hello")
+
+    # Confirms the commmand line word is provided or not
+    if(len(sys.argv))==1:
+        print("Type the word you are looking for after ./grabDatWord!")
         exit()
 
-    # Assigns the argument to word variable
     word = sys.argv[1]
 
-    # Calls the method to find the word definition
-    getDatWord(word)
+    # sends to grabDatWord() method to look for the word
+    grabDatWord(word)
