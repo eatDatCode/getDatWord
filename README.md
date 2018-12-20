@@ -1,7 +1,7 @@
 # getDatWord
 Python script to grab a quick defintion of the word with a suitable example if any.
 
-(Script uses the en.oxforddictionaries.com website to scrap the data.)
+(Script uses the https://en.oxforddictionaries.com website to scrap the data.)
 
 # Requirements:
 $ pip install -r requirements.txt
