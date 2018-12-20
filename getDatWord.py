@@ -97,10 +97,18 @@ def spellCheck(baseUrl,word):
 
 
         # Prompts user to choose from the list a number
-        try:
-            choice = int(input('Which one to look for? : '))
-        except ValueError:
-            print("Enter a number, Not string!")
+        while True:
+            flag = 0
+            try:
+                choice = int(input('Which one to look for? : '))
+                flag = 1
+            except ValueError:
+                print("Enter a number, Not string!")
+
+            if flag == 1:
+                break
+
+
 
         if(choice>(l+1)):
             print("Enter a choice lower than the total suggestions Idiot!")
