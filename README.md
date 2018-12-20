@@ -34,8 +34,12 @@ $ sudo mv word /usr/bin/
 $ word persuade
 
 Phonetic Spelling:/pəˈsweɪd/
+
 Origin:For a discussion of the difference between persuade and convince, see convince
+
 Persuade(verb):
+
 Definition:Induce (someone) to do something through reasoning or argument.
+
 Example: ‘it wasn't easy, but I persuaded him to do the right thing’
 
