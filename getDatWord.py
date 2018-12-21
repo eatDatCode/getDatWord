@@ -38,17 +38,20 @@ def grabDatWord(word):
         origin = bs.findAll('div',{'class':'senseInnerWrapper'})
         phonetic = bs.findAll('span',{'class':'phoneticspelling'})
 
+        # Sometimes Pure Nouns have no origin
+        try:
+            l = len(origin[0].get_text())
+            # prints the phonetic spelling
+            print("Phonetic Spelling:"+phonetic[0].get_text())
 
-        l = len(origin[0].get_text())
-
-        # prints the phonetic spelling
-        print("Phonetic Spelling:"+phonetic[0].get_text())
-
-        """Boy! sometimes the origin of a word can be a long story so I had to monitor
-        the string's length of the origin of a word"""
-        if l < 200:
-            # prints the origin of the word if it's samll story
-            print("Origin:"+origin[0].get_text())
+            """Boy! sometimes the origin of a word can be a long story so I had to monitor
+            the string's length of the origin of a word"""
+            if l < 200:
+                # prints the origin of the word if it's samll story
+                print("Origin:"+origin[0].get_text())
+        # So if there is no origin , then origin clause is elimited from printing
+        except IndexError:
+            pass
 
         print("-"*60)
 
@@ -56,7 +59,12 @@ def grabDatWord(word):
         for i in range(len(posList)):
             print(word.capitalize()+"("+posList[i].get_text()+"):")
             print("Definition:"+definedList[0].get_text())
-            print("Example:"+exList[i].get_text())
+
+            try:
+                print("Example:"+exList[i].get_text())
+            except IndexError:
+                pass
+
             print("-"*60)
 
 
