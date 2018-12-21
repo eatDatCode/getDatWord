@@ -58,7 +58,7 @@ def grabDatWord(word):
         # Prints definition according to Part Of Speech
         for i in range(len(posList)):
             print(word.capitalize()+"("+posList[i].get_text()+"):")
-            print("Definition:"+definedList[0].get_text())
+            print("Definition:"+definedList[i].get_text())
 
             try:
                 print("Example:"+exList[i].get_text())
